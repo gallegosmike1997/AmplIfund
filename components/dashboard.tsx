@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { DeveloperDashboard } from './developer-dashboard'
 import { AiToolsDashboard } from './ai-tools-dashboard'
 import { HelpDashboard } from './help-dashboard'
+import { SettingsDashboard } from './settings-dashboard'
 import {
   Bell,
   CalendarDays,
@@ -66,6 +67,7 @@ export function Dashboard() {
   if (activeNav === 'developer') return <DeveloperDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'ai-tools') return <AiToolsDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'help') return <HelpDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'settings') return <SettingsDashboard onClose={() => setActiveNav('dashboard')} />
 
   return (
     <main className="dashboard-shell">
