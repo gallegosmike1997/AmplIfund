@@ -6,6 +6,7 @@ import { AiToolsDashboard } from './ai-tools-dashboard'
 import { HelpDashboard } from './help-dashboard'
 import { SettingsDashboard } from './settings-dashboard'
 import { AnalyticsDashboard } from './analytics-dashboard'
+import { PrelaunchDashboard } from './prelaunch-dashboard'
 import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
@@ -71,7 +72,7 @@ export function Dashboard() {
       setActivity((items) => [['You', label, 'Just now', 'YO'], ...items])
       setActiveNav('ai-tools')
     }
-    if (label === 'Schedule a Launch') setShowCampaignDialog(true)
+    if (label === 'Schedule a Launch') setActiveNav('prelaunch')
     if (label === 'View Reports') setActiveNav('analytics')
   }
 
@@ -80,6 +81,7 @@ export function Dashboard() {
   if (activeNav === 'help') return <HelpDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'settings') return <SettingsDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'analytics') return <AnalyticsDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'prelaunch') return <PrelaunchDashboard onClose={() => setActiveNav('dashboard')} />
 
   async function handleCreateCampaign() {
     if (!campaignUrl.trim()) return
@@ -109,6 +111,7 @@ export function Dashboard() {
             ['developer', Code2, 'Developer Tools'],
             ['ai-tools', Sparkles, 'AI Tools'],
             ['calendar', CalendarDays, 'Calendar'],
+            ['prelaunch', Rocket, 'Pre-launch Outreach'],
             ['settings', Settings, 'Settings'],
           ].map(([key, Icon, label]) => (
             <button
