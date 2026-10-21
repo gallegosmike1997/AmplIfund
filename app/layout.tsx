@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Amplifund Launch Hub',
+  description: 'A focused launch analytics dashboard for audience insights, conversions, and campaign planning.',
   generator: 'v0.app',
   icons: {
     icon: [
