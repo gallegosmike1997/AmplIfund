@@ -69,13 +69,14 @@ export function Dashboard() {
     window.setTimeout(() => setToast(''), 2200)
     if (label === 'New Audience Analysis') {
       setActivity((items) => [['You', label, 'Just now', 'YO'], ...items])
+      setActiveNav('ai-tools')
     }
     if (label === 'Schedule a Launch') setShowCampaignDialog(true)
     if (label === 'View Reports') setActiveNav('analytics')
   }
 
   if (activeNav === 'developer') return <DeveloperDashboard onClose={() => setActiveNav('dashboard')} />
-  if (activeNav === 'ai-tools') return <AiToolsDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'ai-tools') return <AiToolsDashboard onClose={() => setActiveNav('dashboard')} initialPrompt={activity[0]?.[1] === 'New Audience Analysis' ? 'Analyze my campaign audience and recommend three high-intent segments, their motivations, channels, and ethical validation steps.' : ''} />
   if (activeNav === 'help') return <HelpDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'settings') return <SettingsDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'analytics') return <AnalyticsDashboard onClose={() => setActiveNav('dashboard')} />

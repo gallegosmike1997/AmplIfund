@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BarChart3, BrainCircuit, Network, Plus, RefreshCw, Rocket, Settings, Sparkles, Target, Users, X } from 'lucide-react'
 
 const tools = [
@@ -12,12 +12,19 @@ const tools = [
   ['Audience Sync', 'Sync audience data across external platforms and CRM systems.', RefreshCw, 'sync-tool'],
 ] as const
 
-export function AiToolsDashboard({ onClose }: { onClose: () => void }) {
+export function AiToolsDashboard({ onClose, initialPrompt = '' }: { onClose: () => void; initialPrompt?: string }) {
   const [toast, setToast] = useState('')
   const [activeTool, setActiveTool] = useState('Target AI')
   const [prompt, setPrompt] = useState('')
   const [response, setResponse] = useState('')
   const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    if (initialPrompt) {
+      setActiveTool('Target AI')
+      setPrompt(initialPrompt)
+    }
+  }, [initialPrompt])
 
   async function useTool(name: string) {
     setActiveTool(name)
@@ -44,5 +51,5 @@ export function AiToolsDashboard({ onClose }: { onClose: () => void }) {
 
   return <main className="ai-tools-page">
     <aside className="ai-sidebar"><div className="brand-mark"><img src="/af-logo.png" alt="AF logo" /></div><button className="ai-rail-button active" aria-label="AI tools"><Sparkles size={19} /></button><button className="ai-rail-button" aria-label="Audience"><Users size={19} /></button><button className="ai-rail-button" aria-label="Settings"><Settings size={19} /></button><button className="ai-rail-button" aria-label="Close AI tools" onClick={onClose}><X size={19} /></button></aside>
-    <section className="ai-main"><header className="ai-topbar"><span>AI Tools</span><div className="ai-top-actions"><Sparkles size={17} /><span className="ai-bell">♧</span><button className="avatar avatar-user">MP</button></div></header><div className="ai-content"><div className="ai-title-row"><h1>Your AI Toolkit</h1><div className="ai-orbit"><span>AF</span></div><button className="add-tool-button" onClick={() => useTool('Custom Assistant')}><Plus size={20} /> Add Tool</button></div><div className="ai-tools-grid">{tools.map(([name, description, Icon, className]) => <article className={`ai-tool-card ${className} ${activeTool === name ? 'selected-tool' : ''}`} key={name}><div className="ai-tool-icon"><Icon size={48} strokeWidth={1.5} /></div><div className="ai-tool-copy"><h2>{name}</h2><p>{description}</p></div><button className="use-tool-button" onClick={() => useTool(name)}>Use Tool</button></article>)}</div><form className="ai-workbench" onSubmit={runTool}><div><span className="account-kicker">{activeTool}</span><h2>AI Workbench</h2></div><textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} maxLength={4000} placeholder="Describe your campaign question, audience, or growth challenge..." aria-label="AI workbench prompt" /><div className="workbench-footer"><span>{prompt.length}/4000</span><button type="submit" disabled={busy || !prompt.trim()}>{busy ? 'Working…' : 'Run tool'}</button></div>{response && <div className="ai-response" aria-live="polite">{response}</div>}</form></div></section>{toast && <div className="toast"><Sparkles size={15} /> {toast}</div>}</main>
+    <section className="ai-main"><header className="ai-topbar"><span>AI Tools</span><div className="ai-top-actions"><Sparkles size={17} /><span className="ai-bell">♧</span><button className="avatar avatar-user">MP</button></div></header><div className="ai-content"><div className="ai-title-row"><h1>Your AI Toolkit</h1><div className="ai-orbit"><span>AF</span></div><button className="add-tool-button" onClick={() => useTool('Custom Assistant')}><Plus size={20} /> Add Tool</button></div><div className="ai-tools-grid">{tools.map(([name, description, Icon, className]) => <article className={`ai-tool-card ${className} ${activeTool === name ? 'selected-tool' : ''}`} key={name}><div className="ai-tool-icon"><Icon size={48} strokeWidth={1.5} /></div><div className="ai-tool-copy"><h2>{name}</h2><p>{description}</p></div><button className="use-tool-button" onClick={() => useTool(name)}>{name === 'Target AI' ? 'Analyze Audience' : 'Use Tool'}</button></article>)}</div><form className="ai-workbench" onSubmit={runTool}><div><span className="account-kicker">{activeTool}</span><h2>AI Workbench</h2></div><textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} maxLength={4000} placeholder="Describe your campaign question, audience, or growth challenge..." aria-label="AI workbench prompt" /><div className="workbench-footer"><span>{prompt.length}/4000</span><button type="submit" disabled={busy || !prompt.trim()}>{busy ? 'Working…' : 'Run tool'}</button></div>{response && <div className="ai-response" aria-live="polite">{response}</div>}</form></div></section>{toast && <div className="toast"><Sparkles size={15} /> {toast}</div>}</main>
 }
