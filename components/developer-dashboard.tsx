@@ -23,7 +23,7 @@ export function DeveloperDashboard({ onClose }: { onClose: () => void }) {
   return (
     <main className="developer-page">
       <aside className="dev-sidebar">
-        <div className="brand-mark">AF</div>
+        <div className="brand-mark"><img src="/af-logo.png" alt="AF logo" /></div>
         <button className="dev-rail-button active" aria-label="Developer tools"><LayoutGrid size={18} /></button>
         <button className="dev-rail-button" aria-label="Applications"><LayoutGrid size={18} /></button>
         <button className="dev-rail-button" aria-label="Settings"><Settings size={18} /></button>

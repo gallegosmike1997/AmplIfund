@@ -28,7 +28,7 @@ export function HelpDashboard({ onClose }: HelpDashboardProps) {
   return (
     <main className="help-page">
       <aside className="help-sidebar" aria-label="Help navigation">
-        <button className="help-brand" onClick={onClose} aria-label="Return to dashboard">AF</button>
+        <button className="help-brand" onClick={onClose} aria-label="Return to dashboard"><img src="/af-logo.png" alt="AF logo" /></button>
         <nav>
           <button className="help-rail-button active" aria-label="Help center"><LifeBuoy size={20} /></button>
           <button className="help-rail-button" aria-label="Dashboard" onClick={onClose}><LayoutGridIcon /></button>

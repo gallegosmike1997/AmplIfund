@@ -72,7 +72,7 @@ export function Dashboard() {
   return (
     <main className="dashboard-shell">
       <aside className="sidebar" aria-label="Primary navigation">
-        <button className="brand-mark brand-button" onClick={() => setActiveNav('dashboard')} aria-label="Return to dashboard">AF</button>
+        <button className="brand-mark brand-button" onClick={() => setActiveNav('dashboard')} aria-label="Return to dashboard"><img src="/af-logo.png" alt="AF logo" /></button>
         <nav>
           {[
             ['dashboard', LayoutDashboard, 'Dashboard'],
