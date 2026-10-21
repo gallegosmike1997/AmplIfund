@@ -5,6 +5,7 @@ import { DeveloperDashboard } from './developer-dashboard'
 import { AiToolsDashboard } from './ai-tools-dashboard'
 import { HelpDashboard } from './help-dashboard'
 import { SettingsDashboard } from './settings-dashboard'
+import { AnalyticsDashboard } from './analytics-dashboard'
 import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
@@ -70,12 +71,14 @@ export function Dashboard() {
       setActivity((items) => [['You', label, 'Just now', 'YO'], ...items])
     }
     if (label === 'Schedule a Launch') setShowCampaignDialog(true)
+    if (label === 'View Reports') setActiveNav('analytics')
   }
 
   if (activeNav === 'developer') return <DeveloperDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'ai-tools') return <AiToolsDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'help') return <HelpDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'settings') return <SettingsDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'analytics') return <AnalyticsDashboard onClose={() => setActiveNav('dashboard')} />
 
   async function handleCreateCampaign() {
     if (!campaignUrl.trim()) return
