@@ -50,6 +50,8 @@ export function Dashboard() {
   const [month, setMonth] = useState(2)
   const [showNotifications, setShowNotifications] = useState(true)
   const [showAccount, setShowAccount] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
+  const [selectedDay, setSelectedDay] = useState(19)
   const [activity, setActivity] = useState(activitySeed)
   const [toast, setToast] = useState('')
 
@@ -93,7 +95,7 @@ export function Dashboard() {
             </button>
           ))}
         </nav>
-        <button className="nav-button menu-button" aria-label="Menu"><Menu size={19} /></button>
+        <div className="menu-wrap"><button className="nav-button menu-button" aria-label="Menu" aria-expanded={showMenu} onClick={() => setShowMenu((open) => !open)}><Menu size={19} /></button>{showMenu && <div className="rail-menu" role="menu"><button role="menuitem" onClick={() => { setShowAccount(true); setShowMenu(false) }}>Account</button><button role="menuitem" onClick={() => { setActiveNav('help'); setShowMenu(false) }}>Help Center</button><button role="menuitem" onClick={() => { setActiveNav('settings'); setShowMenu(false) }}>Settings</button></div>}</div>
       </aside>
 
       <section className="main-content">
@@ -108,7 +110,7 @@ export function Dashboard() {
 
         <div className="page-heading">
           {editingTitle ? (
-            <input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} onBlur={() => setEditingTitle(false)} onKeyDown={(e) => e.key === 'Enter' && setEditingTitle(false)} />
+            <input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} onBlur={() => setEditingTitle(false)} onKeyDown={(e) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Enter') setEditingTitle(false); if (e.key === 'Escape') { setTitle('Your Launch Hub'); setEditingTitle(false) } }} />
           ) : (
             <h1>{title}</h1>
           )}
@@ -144,7 +146,7 @@ export function Dashboard() {
             <CardHeader title="Upcoming Launches" />
             <div className="calendar-controls"><button onClick={() => setMonth(Math.max(0, month - 1))}><ChevronLeft size={15} /></button><span>{months[month]}</span><button onClick={() => setMonth(Math.min(3, month + 1))}><ChevronRight size={15} /></button></div>
             <div className="weekdays">{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => <span key={d}>{d}</span>)}</div>
-            <div className="calendar-grid">{calendarDays.map((day, i) => <button key={i} className={`${day === 19 ? 'selected' : ''} ${day < 1 ? 'muted' : ''}`}>{day > 0 ? day : 30 + day}</button>)}</div>
+            <div className="calendar-grid">{calendarDays.map((day, i) => { const displayDay = day > 0 ? day : 30 + day; return <button key={i} onClick={() => day > 0 && setSelectedDay(day)} className={`${day === selectedDay ? 'selected' : ''} ${day < 1 ? 'muted' : ''}`} aria-label={`Select ${displayDay}`} aria-pressed={day === selectedDay}>{displayDay}</button> })}</div>
           </section>
 
           <section className="quick-actions">
