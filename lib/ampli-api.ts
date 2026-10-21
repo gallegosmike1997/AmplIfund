@@ -12,10 +12,14 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '')
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!apiUrl) throw new Error('Campaign API is not configured')
+  const controller = new AbortController()
+  const timeout = window.setTimeout(() => controller.abort(), 12_000)
   const response = await fetch(`${apiUrl}${path}`, {
     ...init,
+    signal: controller.signal,
     headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
   })
+  window.clearTimeout(timeout)
   if (!response.ok) throw new Error((await response.text()) || `Request failed: ${response.status}`)
   return response.json()
 }

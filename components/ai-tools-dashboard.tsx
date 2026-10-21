@@ -14,12 +14,35 @@ const tools = [
 
 export function AiToolsDashboard({ onClose }: { onClose: () => void }) {
   const [toast, setToast] = useState('')
-  function useTool(name: string) {
-    setToast(`${name} opened`)
+  const [activeTool, setActiveTool] = useState('Target AI')
+  const [prompt, setPrompt] = useState('')
+  const [response, setResponse] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  async function useTool(name: string) {
+    setActiveTool(name)
+    setToast(`${name} ready`)
     window.setTimeout(() => setToast(''), 2200)
+  }
+
+  async function runTool(event: React.FormEvent) {
+    event.preventDefault()
+    if (!prompt.trim() || busy) return
+    setBusy(true)
+    setResponse('')
+    try {
+      const result = await fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tool: activeTool, prompt }) })
+      const data = await result.json()
+      if (!result.ok) throw new Error(data.error)
+      setResponse(data.text)
+    } catch (error) {
+      setResponse(error instanceof Error ? error.message : 'Unable to run this tool right now.')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return <main className="ai-tools-page">
     <aside className="ai-sidebar"><div className="brand-mark"><img src="/af-logo.png" alt="AF logo" /></div><button className="ai-rail-button active" aria-label="AI tools"><Sparkles size={19} /></button><button className="ai-rail-button" aria-label="Audience"><Users size={19} /></button><button className="ai-rail-button" aria-label="Settings"><Settings size={19} /></button><button className="ai-rail-button" aria-label="Close AI tools" onClick={onClose}><X size={19} /></button></aside>
-    <section className="ai-main"><header className="ai-topbar"><span>AI Tools</span><div className="ai-top-actions"><Sparkles size={17} /><span className="ai-bell">♧</span><button className="avatar avatar-user">MP</button></div></header><div className="ai-content"><div className="ai-title-row"><h1>Your AI Toolkit</h1><div className="ai-orbit"><span>AF</span></div><button className="add-tool-button" onClick={() => useTool('Add Tool')}><Plus size={20} /> Add Tool</button></div><div className="ai-tools-grid">{tools.map(([name, description, Icon, className]) => <article className={`ai-tool-card ${className}`} key={name}><div className="ai-tool-icon"><Icon size={48} strokeWidth={1.5} /></div><div className="ai-tool-copy"><h2>{name}</h2><p>{description}</p></div><button className="use-tool-button" onClick={() => useTool(name)}>Use Tool</button></article>)}</div></div></section>{toast && <div className="toast"><Sparkles size={15} /> {toast}</div>}</main>
+    <section className="ai-main"><header className="ai-topbar"><span>AI Tools</span><div className="ai-top-actions"><Sparkles size={17} /><span className="ai-bell">♧</span><button className="avatar avatar-user">MP</button></div></header><div className="ai-content"><div className="ai-title-row"><h1>Your AI Toolkit</h1><div className="ai-orbit"><span>AF</span></div><button className="add-tool-button" onClick={() => useTool('Custom Assistant')}><Plus size={20} /> Add Tool</button></div><div className="ai-tools-grid">{tools.map(([name, description, Icon, className]) => <article className={`ai-tool-card ${className} ${activeTool === name ? 'selected-tool' : ''}`} key={name}><div className="ai-tool-icon"><Icon size={48} strokeWidth={1.5} /></div><div className="ai-tool-copy"><h2>{name}</h2><p>{description}</p></div><button className="use-tool-button" onClick={() => useTool(name)}>Use Tool</button></article>)}</div><form className="ai-workbench" onSubmit={runTool}><div><span className="account-kicker">{activeTool}</span><h2>AI Workbench</h2></div><textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} maxLength={4000} placeholder="Describe your campaign question, audience, or growth challenge..." aria-label="AI workbench prompt" /><div className="workbench-footer"><span>{prompt.length}/4000</span><button type="submit" disabled={busy || !prompt.trim()}>{busy ? 'Working…' : 'Run tool'}</button></div>{response && <div className="ai-response" aria-live="polite">{response}</div>}</form></div></section>{toast && <div className="toast"><Sparkles size={15} /> {toast}</div>}</main>
 }
