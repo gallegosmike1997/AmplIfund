@@ -5,6 +5,10 @@ import { DeveloperDashboard } from './developer-dashboard'
 import { AiToolsDashboard } from './ai-tools-dashboard'
 import { HelpDashboard } from './help-dashboard'
 import { SettingsDashboard } from './settings-dashboard'
+import { AnalyticsDashboard } from './analytics-dashboard'
+import { PrelaunchDashboard } from './prelaunch-dashboard'
+import { AccountAssistant } from './account-assistant'
+import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
   CalendarDays,
@@ -54,6 +58,10 @@ export function Dashboard() {
   const [selectedDay, setSelectedDay] = useState(19)
   const [activity, setActivity] = useState(activitySeed)
   const [toast, setToast] = useState('')
+  const [showCampaignDialog, setShowCampaignDialog] = useState(false)
+  const [campaignUrl, setCampaignUrl] = useState('')
+  const [campaigns, setCampaigns] = useState<Campaign[]>([])
+  const [campaignBusy, setCampaignBusy] = useState(false)
 
   const months = ['January', 'February', 'March', 'April']
   const calendarDays = useMemo(() => Array.from({ length: 35 }, (_, i) => i - 2), [])
@@ -63,13 +71,36 @@ export function Dashboard() {
     window.setTimeout(() => setToast(''), 2200)
     if (label === 'New Audience Analysis') {
       setActivity((items) => [['You', label, 'Just now', 'YO'], ...items])
+      setActiveNav('ai-tools')
     }
+    if (label === 'Schedule a Launch') setActiveNav('prelaunch')
+    if (label === 'View Reports') setActiveNav('analytics')
   }
 
   if (activeNav === 'developer') return <DeveloperDashboard onClose={() => setActiveNav('dashboard')} />
-  if (activeNav === 'ai-tools') return <AiToolsDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'ai-tools') return <AiToolsDashboard onClose={() => setActiveNav('dashboard')} initialPrompt={activity[0]?.[1] === 'New Audience Analysis' ? 'Analyze my campaign audience and recommend three high-intent segments, their motivations, channels, and ethical validation steps.' : ''} />
   if (activeNav === 'help') return <HelpDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'settings') return <SettingsDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'analytics') return <AnalyticsDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'prelaunch') return <PrelaunchDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'account') return <AccountAssistant onClose={() => setActiveNav('dashboard')} />
+
+  async function handleCreateCampaign() {
+    if (!campaignUrl.trim()) return
+    setCampaignBusy(true)
+    try {
+      const campaign = await ampliApi.createCampaign(campaignUrl.trim())
+      setCampaigns((items) => [campaign, ...items])
+      setCampaignUrl('')
+      setShowCampaignDialog(false)
+      action('Campaign created')
+    } catch {
+      setToast('Connect the Ampli-AI backend with NEXT_PUBLIC_API_URL to create campaigns')
+      window.setTimeout(() => setToast(''), 3200)
+    } finally {
+      setCampaignBusy(false)
+    }
+  }
 
   return (
     <main className="dashboard-shell">
@@ -82,6 +113,8 @@ export function Dashboard() {
             ['developer', Code2, 'Developer Tools'],
             ['ai-tools', Sparkles, 'AI Tools'],
             ['calendar', CalendarDays, 'Calendar'],
+            ['prelaunch', Rocket, 'Pre-launch Outreach'],
+            ['account', Users, 'Account Assistant'],
             ['settings', Settings, 'Settings'],
           ].map(([key, Icon, label]) => (
             <button
@@ -95,7 +128,7 @@ export function Dashboard() {
             </button>
           ))}
         </nav>
-        <div className="menu-wrap"><button className="nav-button menu-button" aria-label="Menu" aria-expanded={showMenu} onClick={() => setShowMenu((open) => !open)}><Menu size={19} /></button>{showMenu && <div className="rail-menu" role="menu"><button role="menuitem" onClick={() => { setShowAccount(true); setShowMenu(false) }}>Account</button><button role="menuitem" onClick={() => { setActiveNav('help'); setShowMenu(false) }}>Help Center</button><button role="menuitem" onClick={() => { setActiveNav('settings'); setShowMenu(false) }}>Settings</button></div>}</div>
+        <div className="menu-wrap"><button className="nav-button menu-button" aria-label="Menu" aria-expanded={showMenu} onClick={() => setShowMenu((open) => !open)}><Menu size={19} /></button>{showMenu && <div className="rail-menu" role="menu"><button role="menuitem" onClick={() => { setActiveNav('account'); setShowMenu(false) }}>Account</button><button role="menuitem" onClick={() => { setActiveNav('help'); setShowMenu(false) }}>Help Center</button><button role="menuitem" onClick={() => { setActiveNav('settings'); setShowMenu(false) }}>Settings</button></div>}</div>
       </aside>
 
       <section className="main-content">
@@ -104,7 +137,7 @@ export function Dashboard() {
           <div className="top-actions">
             <button className="icon-button" aria-label="Help" onClick={() => setActiveNav('help')}><CircleHelp size={17} /></button>
             <button className="icon-button notification-trigger" onClick={() => setShowNotifications(!showNotifications)} aria-label="Toggle notifications"><Bell size={17} /><span /></button>
-            <button className="avatar avatar-user account-trigger" onClick={() => setShowAccount(true)} aria-label="Open account page">MP</button>
+            <button className="avatar avatar-user account-trigger" onClick={() => setActiveNav('account')} aria-label="Open account assistant">MP</button>
           </div>
         </header>
 
@@ -159,6 +192,7 @@ export function Dashboard() {
         </div>
       </section>
 
+      {showCampaignDialog && <div className="campaign-dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="campaign-dialog-title" onMouseDown={(event) => event.target === event.currentTarget && setShowCampaignDialog(false)}><form className="campaign-dialog" onSubmit={(event) => { event.preventDefault(); void handleCreateCampaign() }}><div className="account-modal-header"><div><span className="account-kicker">Campaign workspace</span><h2 id="campaign-dialog-title">Connect a campaign</h2></div><button type="button" className="account-close" onClick={() => setShowCampaignDialog(false)} aria-label="Close campaign dialog">×</button></div><p className="dialog-copy">Paste a Kickstarter URL to bring campaign analysis, community matching, and outreach into the Launch Hub.</p><label className="dialog-label" htmlFor="campaign-url">Kickstarter campaign URL</label><input id="campaign-url" className="dialog-input" type="url" required value={campaignUrl} onChange={(event) => setCampaignUrl(event.target.value)} placeholder="https://www.kickstarter.com/projects/..." /><div className="dialog-actions"><button type="button" className="dialog-cancel" onClick={() => setShowCampaignDialog(false)}>Cancel</button><button type="submit" className="dialog-submit" disabled={campaignBusy}>{campaignBusy ? 'Connecting…' : 'Connect Campaign'}</button></div>{campaigns.length > 0 && <div className="connected-campaigns"><strong>Connected this session</strong>{campaigns.map((campaign) => <span key={campaign.id}>{campaign.title || campaign.kickstarter_url}</span>)}</div>}</form></div>}
       {showNotifications && <aside className="notifications"><div className="notification-heading"><h2>Notifications</h2><button onClick={() => setShowNotifications(false)} aria-label="Close notifications"><MoreVertical size={17} /></button></div>{notifications.map(([text, time, initials], i) => <div className="notification-row" key={i}><div className={`avatar ${i % 2 ? 'avatar-warm' : 'avatar-cool'}`}>{initials}</div><div><strong>Notification</strong><p>{text}</p></div><time>{time}</time></div>)}<button className="show-more" onClick={() => action('All notifications')}>Show More</button></aside>}
       {showAccount && <div className="account-overlay" role="dialog" aria-modal="true" aria-labelledby="account-title" onMouseDown={(event) => event.target === event.currentTarget && setShowAccount(false)}><section className="account-modal"><header className="account-modal-header"><div><span className="account-kicker">Account Page</span><h2 id="account-title">Account Overview</h2></div><button className="account-close" onClick={() => setShowAccount(false)} aria-label="Close account page"><X size={18} /></button></header><div className="account-overview-grid"><article className="account-card profile-account-card"><div className="account-card-heading"><h3>Profile</h3><span className="account-status">Active</span></div><div className="profile-summary"><div className="avatar profile-avatar">MP</div><div><strong>Profile</strong><span>email@domain.com</span></div></div><dl className="profile-details"><div><dt>Full name</dt><dd>Forin Profile</dd></div><div><dt>Phone</dt><dd>(818) 562-8896</dd></div><div><dt>Address</dt><dd>227 Montenwat Street,<br />Eloripon Road, CX 82500</dd></div></dl><button className="account-secondary-button" onClick={() => action('Manage Profile')}>Manage Profile</button></article><article className="account-card plan-account-card"><div className="account-card-heading"><h3>Current Plan: <em>Pro (Active)</em></h3></div><p>Your profile details and audience tools are ready for the next launch.</p><h4>Pro Plan Features</h4><ul className="plan-features"><li>Audience analysis started</li><li>Optimizes audience excellence</li><li>Reporter sections and insights</li><li>Platform integrations</li><li>Upgrade Subscription</li></ul><button className="account-primary-button" onClick={() => action('Upgrade Subscription')}>Upgrade Subscription</button></article><article className="account-card usage-account-card"><div className="account-card-heading"><h3>Usage</h3></div><div className="donut-row"><div className="donut donut-one" /><div className="donut donut-two" /></div><div className="usage-summary"><h4>Usage Summary</h4><div><span><i className="usage-dot blue-dot" />Usage</span><strong>$199.99</strong></div><small>Audience analysis started</small><div><span><i className="usage-dot purple-dot" />Amount</span><strong>$199.99</strong></div><small>Total Conversions: 4.8K</small></div></article></div><div className="account-lower-grid"><article className="account-card log-account-card"><div className="account-card-heading"><h3>Activity Log</h3><ChevronDown size={16} /></div>{activity.slice(0, 4).map(([name, detail, time, initials], i) => <div className="account-log-row" key={`${name}-${i}`}><span className="log-dot" /><div><strong>{detail}</strong><small>{time} · {name}</small></div><div className="avatar mini-account-avatar">{initials}</div></div>)}</article><article className="account-card log-account-card"><div className="account-card-heading"><h3>Billing History</h3><ChevronDown size={16} /></div>{['Audience analysis started', 'New launch scheduled', 'New launch analysis', 'Audience analysis started'].map((item, i) => <div className="account-log-row" key={`${item}-${i}`}><span className="log-dot" /><div><strong>{item}</strong><small>Time: 2024, 13:{39 - i * 3} PM</small></div><div className="avatar mini-account-avatar">PD</div></div>)}</article><article className="account-card invoice-account-card"><div className="account-card-heading"><h3>Billing History</h3><ChevronDown size={16} /></div><div className="invoice-item"><strong>Invoice #1234</strong><span>Amount: $199.99</span><span>Date: 2024-06-15</span><span>Status: <b>Paid</b></span><button onClick={() => action('View Invoice')}>View Invoice</button></div><div className="invoice-item"><strong>Invoice #1234</strong><span>Amount: $199.99</span><span>Date: 2024-06-15</span><span>Status: <b>Paid</b></span><button onClick={() => action('View Invoice')}>View Invoice</button></div></article></div></section></div>}
       {toast && <div className="toast"><Sparkles size={15} /> {toast}</div>}
