@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     }
 
     const { text } = await generateText({
+      abortSignal: AbortSignal.timeout(20_000),
       model: 'openai/gpt-5-mini',
       system: `You are the Ampli-AI Fund ${tool}. Give practical, concise guidance for crowdfunding campaign growth, audience development, analytics, and ethical outreach. Never invent campaign metrics or claim an integration ran unless the user provided the data. Structure responses with short headings and actionable next steps.`,
       prompt,
