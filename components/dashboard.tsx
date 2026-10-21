@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { DeveloperDashboard } from './developer-dashboard'
 import { AiToolsDashboard } from './ai-tools-dashboard'
+import { HelpDashboard } from './help-dashboard'
 import {
   Bell,
   CalendarDays,
@@ -64,11 +65,12 @@ export function Dashboard() {
 
   if (activeNav === 'developer') return <DeveloperDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'ai-tools') return <AiToolsDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'help') return <HelpDashboard onClose={() => setActiveNav('dashboard')} />
 
   return (
     <main className="dashboard-shell">
       <aside className="sidebar" aria-label="Primary navigation">
-        <div className="brand-mark">AF</div>
+        <button className="brand-mark brand-button" onClick={() => setActiveNav('dashboard')} aria-label="Return to dashboard">AF</button>
         <nav>
           {[
             ['dashboard', LayoutDashboard, 'Dashboard'],
@@ -96,7 +98,7 @@ export function Dashboard() {
         <header className="topbar">
           <div className="eyebrow">{activeNav[0].toUpperCase() + activeNav.slice(1)}</div>
           <div className="top-actions">
-            <button className="icon-button" aria-label="Help"><CircleHelp size={17} /></button>
+            <button className="icon-button" aria-label="Help" onClick={() => setActiveNav('help')}><CircleHelp size={17} /></button>
             <button className="icon-button notification-trigger" onClick={() => setShowNotifications(!showNotifications)} aria-label="Toggle notifications"><Bell size={17} /><span /></button>
             <button className="avatar avatar-user account-trigger" onClick={() => setShowAccount(true)} aria-label="Open account page">MP</button>
           </div>
