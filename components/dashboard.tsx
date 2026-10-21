@@ -7,6 +7,7 @@ import { HelpDashboard } from './help-dashboard'
 import { SettingsDashboard } from './settings-dashboard'
 import { AnalyticsDashboard } from './analytics-dashboard'
 import { PrelaunchDashboard } from './prelaunch-dashboard'
+import { AccountAssistant } from './account-assistant'
 import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
@@ -82,6 +83,7 @@ export function Dashboard() {
   if (activeNav === 'settings') return <SettingsDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'analytics') return <AnalyticsDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'prelaunch') return <PrelaunchDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'account') return <AccountAssistant onClose={() => setActiveNav('dashboard')} />
 
   async function handleCreateCampaign() {
     if (!campaignUrl.trim()) return
@@ -112,6 +114,7 @@ export function Dashboard() {
             ['ai-tools', Sparkles, 'AI Tools'],
             ['calendar', CalendarDays, 'Calendar'],
             ['prelaunch', Rocket, 'Pre-launch Outreach'],
+            ['account', Users, 'Account Assistant'],
             ['settings', Settings, 'Settings'],
           ].map(([key, Icon, label]) => (
             <button
@@ -125,7 +128,7 @@ export function Dashboard() {
             </button>
           ))}
         </nav>
-        <div className="menu-wrap"><button className="nav-button menu-button" aria-label="Menu" aria-expanded={showMenu} onClick={() => setShowMenu((open) => !open)}><Menu size={19} /></button>{showMenu && <div className="rail-menu" role="menu"><button role="menuitem" onClick={() => { setShowAccount(true); setShowMenu(false) }}>Account</button><button role="menuitem" onClick={() => { setActiveNav('help'); setShowMenu(false) }}>Help Center</button><button role="menuitem" onClick={() => { setActiveNav('settings'); setShowMenu(false) }}>Settings</button></div>}</div>
+        <div className="menu-wrap"><button className="nav-button menu-button" aria-label="Menu" aria-expanded={showMenu} onClick={() => setShowMenu((open) => !open)}><Menu size={19} /></button>{showMenu && <div className="rail-menu" role="menu"><button role="menuitem" onClick={() => { setActiveNav('account'); setShowMenu(false) }}>Account</button><button role="menuitem" onClick={() => { setActiveNav('help'); setShowMenu(false) }}>Help Center</button><button role="menuitem" onClick={() => { setActiveNav('settings'); setShowMenu(false) }}>Settings</button></div>}</div>
       </aside>
 
       <section className="main-content">
@@ -134,7 +137,7 @@ export function Dashboard() {
           <div className="top-actions">
             <button className="icon-button" aria-label="Help" onClick={() => setActiveNav('help')}><CircleHelp size={17} /></button>
             <button className="icon-button notification-trigger" onClick={() => setShowNotifications(!showNotifications)} aria-label="Toggle notifications"><Bell size={17} /><span /></button>
-            <button className="avatar avatar-user account-trigger" onClick={() => setShowAccount(true)} aria-label="Open account page">MP</button>
+            <button className="avatar avatar-user account-trigger" onClick={() => setActiveNav('account')} aria-label="Open account assistant">MP</button>
           </div>
         </header>
 
