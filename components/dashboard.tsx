@@ -1,10 +1,12 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { DeveloperDashboard } from './developer-dashboard'
 import {
   Bell,
   CalendarDays,
   ChevronDown,
+  Code2,
   ChevronLeft,
   ChevronRight,
   CircleHelp,
@@ -59,6 +61,8 @@ export function Dashboard() {
     }
   }
 
+  if (activeNav === 'developer') return <DeveloperDashboard onClose={() => setActiveNav('dashboard')} />
+
   return (
     <main className="dashboard-shell">
       <aside className="sidebar" aria-label="Primary navigation">
@@ -67,6 +71,7 @@ export function Dashboard() {
           {[
             ['dashboard', LayoutDashboard, 'Dashboard'],
             ['analytics', TrendingUp, 'Analytics'],
+            ['developer', Code2, 'Developer Tools'],
             ['calendar', CalendarDays, 'Calendar'],
             ['settings', Settings, 'Settings'],
           ].map(([key, Icon, label]) => (
