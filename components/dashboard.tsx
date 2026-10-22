@@ -9,6 +9,9 @@ import { AnalyticsDashboard } from './analytics-dashboard'
 import { PrelaunchDashboard } from './prelaunch-dashboard'
 import { AccountAssistant } from './account-assistant'
 import { InsightEngineDashboard } from './insight-engine-dashboard'
+import { CofounderDashboard } from './cofounder-dashboard'
+import { WebsiteHealthScanner } from './website-health-scanner'
+import { CalendarDashboard } from './calendar-dashboard'
 import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
@@ -20,12 +23,14 @@ import {
   CircleHelp,
   Grid2X2,
   Gauge,
+  Globe2,
   LayoutDashboard,
   Menu,
   MoreVertical,
   Pencil,
   Rocket,
   Search,
+  Filter,
   Settings,
   Sparkles,
   TrendingUp,
@@ -64,6 +69,8 @@ export function Dashboard() {
   const [campaignUrl, setCampaignUrl] = useState('')
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [campaignBusy, setCampaignBusy] = useState(false)
+  const [showLaunchGuide, setShowLaunchGuide] = useState(true)
+  const [activityFilter, setActivityFilter] = useState<'all' | 'audience' | 'launch'>('all')
 
   const months = ['January', 'February', 'March', 'April']
   const calendarDays = useMemo(() => Array.from({ length: 35 }, (_, i) => i - 2), [])
@@ -87,6 +94,9 @@ export function Dashboard() {
   if (activeNav === 'prelaunch') return <PrelaunchDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'account') return <AccountAssistant onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'insights') return <InsightEngineDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'cofounder') return <CofounderDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'health') return <WebsiteHealthScanner onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'calendar') return <CalendarDashboard onClose={() => setActiveNav('dashboard')} />
 
   async function handleCreateCampaign() {
     if (!campaignUrl.trim()) return
@@ -114,6 +124,8 @@ export function Dashboard() {
             ['dashboard', LayoutDashboard, 'Dashboard'],
             ['analytics', TrendingUp, 'Analytics'],
             ['insights', Gauge, 'Insight Engine'],
+            ['cofounder', Sparkles, 'Campaign Co-Founder'],
+            ['health', Globe2, 'Website Health Scanner'],
             ['developer', Code2, 'Developer Tools'],
             ['ai-tools', Sparkles, 'AI Tools'],
             ['calendar', CalendarDays, 'Calendar'],
@@ -155,7 +167,7 @@ export function Dashboard() {
           <span className="dashboard-pill"><Grid2X2 size={13} /> Dashboard</span>
         </div>
 
-        <div className="dashboard-grid">
+        <section className="launch-guide" aria-label="Launch readiness guide"><div className="launch-guide-copy"><span className="eyebrow"><Sparkles size={13} /> Launch command center</span><h2>Turn your next idea into a launch people can follow.</h2><p>Connect a campaign, understand your audience, and build a respectful pre-launch plan from one workspace.</p></div><div className="launch-guide-actions"><button className="guide-primary" onClick={() => setActiveNav('account')}>Set up workspace</button><button className="guide-secondary" onClick={() => setActiveNav('cofounder')}>Open daily plan</button><button className="guide-secondary" onClick={() => setActiveNav('health')}>Scan website</button></div>{showLaunchGuide && <button className="guide-dismiss" onClick={() => setShowLaunchGuide(false)} aria-label="Dismiss launch guide"><X size={15} /></button>}</section><section className="dashboard-kpis" aria-label="Launch overview"><article><span>Audience reached</span><strong>1.2M+</strong><small className="kpi-up">+18.4% this month</small></article><article><span>Conversion rate</span><strong>4.8K</strong><small className="kpi-up">+12.7% this month</small></article><article><span>Launch readiness</span><strong>72%</strong><small>3 actions to improve</small></article><article><span>AI opportunities</span><strong>14</strong><small>5 high impact</small></article></section><div className="dashboard-grid">
           <section className="chart-card performance-card">
             <CardHeader title="Performance Charts" />
             <div className="chart-legend"><span className="legend-purple">⌁</span> Aquihit <ChevronDown size={12} /></div>
@@ -189,10 +201,10 @@ export function Dashboard() {
           <section className="quick-actions">
             <button className="action-card purple" onClick={() => action('New Audience Analysis')}><Search size={38} /><span>Start New<br />Audience Analysis</span></button>
             <button className="action-card blue" onClick={() => action('Schedule a Launch')}><CalendarDays size={39} /><span>Schedule a<br />Launch</span></button>
-            <button className="action-card gold" onClick={() => action('View Reports')}><TrendingUp size={39} /><span>View Reports</span></button>
+            <button className="action-card gold" onClick={() => action('View Reports')}><TrendingUp size={39} /><span>Review<br />Performance</span></button>
           </section>
 
-          <section className="chart-card activity-card"><CardHeader title="Latest Activity Feed" actionLabel="Recent All" /><div className="activity-list">{activity.map(([name, detail, time, initials], i) => <div className="activity-row" key={`${name}-${i}`}><div className="avatar small-avatar">{initials}</div><div><strong>{name}: <span>{detail}</span></strong><small>Received {time}</small></div></div>)}</div></section>
+          <section className="chart-card activity-card"><div className="activity-heading"><CardHeader title="Latest Activity Feed" /><div className="activity-filters" role="group" aria-label="Filter activity"><button className={activityFilter === 'all' ? 'active' : ''} onClick={() => setActivityFilter('all')}>All</button><button className={activityFilter === 'audience' ? 'active' : ''} onClick={() => setActivityFilter('audience')}>Audience</button><button className={activityFilter === 'launch' ? 'active' : ''} onClick={() => setActivityFilter('launch')}>Launches</button><Filter size={13} /></div></div><div className="activity-list">{activity.filter(([, detail]) => activityFilter === 'all' || (activityFilter === 'audience' ? detail.toLowerCase().includes('audience') : detail.toLowerCase().includes('launch'))).map(([name, detail, time, initials], i) => <div className="activity-row" key={`${name}-${i}`}><div className="avatar small-avatar">{initials}</div><div><strong>{name}: <span>{detail}</span></strong><small>Received {time}</small></div></div>)}</div></section>
         </div>
       </section>
 
