@@ -11,6 +11,7 @@ import { AccountAssistant } from './account-assistant'
 import { InsightEngineDashboard } from './insight-engine-dashboard'
 import { CofounderDashboard } from './cofounder-dashboard'
 import { WebsiteHealthScanner } from './website-health-scanner'
+import { CalendarDashboard } from './calendar-dashboard'
 import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
@@ -95,6 +96,7 @@ export function Dashboard() {
   if (activeNav === 'insights') return <InsightEngineDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'cofounder') return <CofounderDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'health') return <WebsiteHealthScanner onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'calendar') return <CalendarDashboard onClose={() => setActiveNav('dashboard')} />
 
   async function handleCreateCampaign() {
     if (!campaignUrl.trim()) return
