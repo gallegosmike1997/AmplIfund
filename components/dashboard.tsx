@@ -9,6 +9,8 @@ import { AnalyticsDashboard } from './analytics-dashboard'
 import { PrelaunchDashboard } from './prelaunch-dashboard'
 import { AccountAssistant } from './account-assistant'
 import { InsightEngineDashboard } from './insight-engine-dashboard'
+import { CofounderDashboard } from './cofounder-dashboard'
+import { WebsiteHealthScanner } from './website-health-scanner'
 import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
@@ -20,6 +22,7 @@ import {
   CircleHelp,
   Grid2X2,
   Gauge,
+  Globe2,
   LayoutDashboard,
   Menu,
   MoreVertical,
@@ -90,6 +93,8 @@ export function Dashboard() {
   if (activeNav === 'prelaunch') return <PrelaunchDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'account') return <AccountAssistant onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'insights') return <InsightEngineDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'cofounder') return <CofounderDashboard onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'health') return <WebsiteHealthScanner onClose={() => setActiveNav('dashboard')} />
 
   async function handleCreateCampaign() {
     if (!campaignUrl.trim()) return
@@ -117,6 +122,8 @@ export function Dashboard() {
             ['dashboard', LayoutDashboard, 'Dashboard'],
             ['analytics', TrendingUp, 'Analytics'],
             ['insights', Gauge, 'Insight Engine'],
+            ['cofounder', Sparkles, 'Campaign Co-Founder'],
+            ['health', Globe2, 'Website Health Scanner'],
             ['developer', Code2, 'Developer Tools'],
             ['ai-tools', Sparkles, 'AI Tools'],
             ['calendar', CalendarDays, 'Calendar'],
@@ -158,7 +165,7 @@ export function Dashboard() {
           <span className="dashboard-pill"><Grid2X2 size={13} /> Dashboard</span>
         </div>
 
-        <section className="launch-guide" aria-label="Launch readiness guide"><div className="launch-guide-copy"><span className="eyebrow"><Sparkles size={13} /> Launch command center</span><h2>Turn your next idea into a launch people can follow.</h2><p>Connect a campaign, understand your audience, and build a respectful pre-launch plan from one workspace.</p></div><div className="launch-guide-actions"><button className="guide-primary" onClick={() => setActiveNav('account')}>Set up workspace</button><button className="guide-secondary" onClick={() => setActiveNav('insights')}>Run launch audit</button></div>{showLaunchGuide && <button className="guide-dismiss" onClick={() => setShowLaunchGuide(false)} aria-label="Dismiss launch guide"><X size={15} /></button>}</section><section className="dashboard-kpis" aria-label="Launch overview"><article><span>Audience reached</span><strong>1.2M+</strong><small className="kpi-up">+18.4% this month</small></article><article><span>Conversion rate</span><strong>4.8K</strong><small className="kpi-up">+12.7% this month</small></article><article><span>Launch readiness</span><strong>72%</strong><small>3 actions to improve</small></article><article><span>AI opportunities</span><strong>14</strong><small>5 high impact</small></article></section><div className="dashboard-grid">
+        <section className="launch-guide" aria-label="Launch readiness guide"><div className="launch-guide-copy"><span className="eyebrow"><Sparkles size={13} /> Launch command center</span><h2>Turn your next idea into a launch people can follow.</h2><p>Connect a campaign, understand your audience, and build a respectful pre-launch plan from one workspace.</p></div><div className="launch-guide-actions"><button className="guide-primary" onClick={() => setActiveNav('account')}>Set up workspace</button><button className="guide-secondary" onClick={() => setActiveNav('cofounder')}>Open daily plan</button><button className="guide-secondary" onClick={() => setActiveNav('health')}>Scan website</button></div>{showLaunchGuide && <button className="guide-dismiss" onClick={() => setShowLaunchGuide(false)} aria-label="Dismiss launch guide"><X size={15} /></button>}</section><section className="dashboard-kpis" aria-label="Launch overview"><article><span>Audience reached</span><strong>1.2M+</strong><small className="kpi-up">+18.4% this month</small></article><article><span>Conversion rate</span><strong>4.8K</strong><small className="kpi-up">+12.7% this month</small></article><article><span>Launch readiness</span><strong>72%</strong><small>3 actions to improve</small></article><article><span>AI opportunities</span><strong>14</strong><small>5 high impact</small></article></section><div className="dashboard-grid">
           <section className="chart-card performance-card">
             <CardHeader title="Performance Charts" />
             <div className="chart-legend"><span className="legend-purple">⌁</span> Aquihit <ChevronDown size={12} /></div>
