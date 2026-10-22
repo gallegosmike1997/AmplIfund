@@ -64,6 +64,7 @@ export function Dashboard() {
   const [campaignUrl, setCampaignUrl] = useState('')
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [campaignBusy, setCampaignBusy] = useState(false)
+  const [showLaunchGuide, setShowLaunchGuide] = useState(true)
 
   const months = ['January', 'February', 'March', 'April']
   const calendarDays = useMemo(() => Array.from({ length: 35 }, (_, i) => i - 2), [])
@@ -155,7 +156,7 @@ export function Dashboard() {
           <span className="dashboard-pill"><Grid2X2 size={13} /> Dashboard</span>
         </div>
 
-        <div className="dashboard-grid">
+        <section className="launch-guide" aria-label="Launch readiness guide"><div className="launch-guide-copy"><span className="eyebrow"><Sparkles size={13} /> Launch command center</span><h2>Turn your next idea into a launch people can follow.</h2><p>Connect a campaign, understand your audience, and build a respectful pre-launch plan from one workspace.</p></div><div className="launch-guide-actions"><button className="guide-primary" onClick={() => setActiveNav('account')}>Set up workspace</button><button className="guide-secondary" onClick={() => setActiveNav('insights')}>Run launch audit</button></div>{showLaunchGuide && <button className="guide-dismiss" onClick={() => setShowLaunchGuide(false)} aria-label="Dismiss launch guide"><X size={15} /></button>}</section><section className="dashboard-kpis" aria-label="Launch overview"><article><span>Audience reached</span><strong>1.2M+</strong><small className="kpi-up">+18.4% this month</small></article><article><span>Conversion rate</span><strong>4.8K</strong><small className="kpi-up">+12.7% this month</small></article><article><span>Launch readiness</span><strong>72%</strong><small>3 actions to improve</small></article><article><span>AI opportunities</span><strong>14</strong><small>5 high impact</small></article></section><div className="dashboard-grid">
           <section className="chart-card performance-card">
             <CardHeader title="Performance Charts" />
             <div className="chart-legend"><span className="legend-purple">⌁</span> Aquihit <ChevronDown size={12} /></div>
@@ -189,7 +190,7 @@ export function Dashboard() {
           <section className="quick-actions">
             <button className="action-card purple" onClick={() => action('New Audience Analysis')}><Search size={38} /><span>Start New<br />Audience Analysis</span></button>
             <button className="action-card blue" onClick={() => action('Schedule a Launch')}><CalendarDays size={39} /><span>Schedule a<br />Launch</span></button>
-            <button className="action-card gold" onClick={() => action('View Reports')}><TrendingUp size={39} /><span>View Reports</span></button>
+            <button className="action-card gold" onClick={() => action('View Reports')}><TrendingUp size={39} /><span>Review<br />Performance</span></button>
           </section>
 
           <section className="chart-card activity-card"><CardHeader title="Latest Activity Feed" actionLabel="Recent All" /><div className="activity-list">{activity.map(([name, detail, time, initials], i) => <div className="activity-row" key={`${name}-${i}`}><div className="avatar small-avatar">{initials}</div><div><strong>{name}: <span>{detail}</span></strong><small>Received {time}</small></div></div>)}</div></section>
