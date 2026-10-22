@@ -47,7 +47,11 @@ export function Dashboard() {
   return (
     <main className="insight-app">
       <aside className="insight-sidebar">
-        <button className="insight-logo" aria-label="Ampli home"><span>A</span></button>
+        <div className="brand-lockup">
+          <button className="insight-logo" aria-label="Ampli-Ai-Fund home"><img src="/af-logo.png" alt="Ampli-Ai-Fund logo" /></button>
+          <div><strong>Ampli</strong><span>Ai-Fund</span></div>
+        </div>
+        <div className="companion-label"><span /> Companion app</div>
         <div className="sidebar-section-label">Workspace</div>
         <nav className="insight-nav" aria-label="Primary navigation">
           <button className="insight-nav-item active" aria-current="page"><Layers3 /> Overview</button>
@@ -65,7 +69,7 @@ export function Dashboard() {
 
       <section className="insight-main">
         <header className="insight-topbar">
-          <div className="mobile-brand"><span>A</span> Ampli</div>
+          <div className="mobile-brand"><img src="/af-logo.png" alt="" /> <span>Ampli</span><small>Insight Engine</small></div>
           <div className="breadcrumbs"><span>Workspace</span><ChevronRight /><strong>Overview</strong></div>
           <div className="topbar-actions">
             <button className="topbar-icon" aria-label="Help"><CircleHelp /></button>

@@ -4,7 +4,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Ampli Insight Engine™',
-  description: 'Intelligence for your next launch. Understand your site, your crowd, your campaign, and the moment to launch.',
+  description: 'Ampli Insight Engine is the intelligence companion to Ampli-Ai-Fund—bringing site, crowd, campaign, and launch signals into one workspace.',
   generator: 'v0.app',
   icons: {
     icon: [
