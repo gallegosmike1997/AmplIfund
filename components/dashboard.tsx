@@ -26,6 +26,7 @@ import {
   Pencil,
   Rocket,
   Search,
+  Filter,
   Settings,
   Sparkles,
   TrendingUp,
@@ -65,6 +66,7 @@ export function Dashboard() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [campaignBusy, setCampaignBusy] = useState(false)
   const [showLaunchGuide, setShowLaunchGuide] = useState(true)
+  const [activityFilter, setActivityFilter] = useState<'all' | 'audience' | 'launch'>('all')
 
   const months = ['January', 'February', 'March', 'April']
   const calendarDays = useMemo(() => Array.from({ length: 35 }, (_, i) => i - 2), [])
@@ -193,7 +195,7 @@ export function Dashboard() {
             <button className="action-card gold" onClick={() => action('View Reports')}><TrendingUp size={39} /><span>Review<br />Performance</span></button>
           </section>
 
-          <section className="chart-card activity-card"><CardHeader title="Latest Activity Feed" actionLabel="Recent All" /><div className="activity-list">{activity.map(([name, detail, time, initials], i) => <div className="activity-row" key={`${name}-${i}`}><div className="avatar small-avatar">{initials}</div><div><strong>{name}: <span>{detail}</span></strong><small>Received {time}</small></div></div>)}</div></section>
+          <section className="chart-card activity-card"><div className="activity-heading"><CardHeader title="Latest Activity Feed" /><div className="activity-filters" role="group" aria-label="Filter activity"><button className={activityFilter === 'all' ? 'active' : ''} onClick={() => setActivityFilter('all')}>All</button><button className={activityFilter === 'audience' ? 'active' : ''} onClick={() => setActivityFilter('audience')}>Audience</button><button className={activityFilter === 'launch' ? 'active' : ''} onClick={() => setActivityFilter('launch')}>Launches</button><Filter size={13} /></div></div><div className="activity-list">{activity.filter(([, detail]) => activityFilter === 'all' || (activityFilter === 'audience' ? detail.toLowerCase().includes('audience') : detail.toLowerCase().includes('launch'))).map(([name, detail, time, initials], i) => <div className="activity-row" key={`${name}-${i}`}><div className="avatar small-avatar">{initials}</div><div><strong>{name}: <span>{detail}</span></strong><small>Received {time}</small></div></div>)}</div></section>
         </div>
       </section>
 
