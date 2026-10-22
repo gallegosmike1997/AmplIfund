@@ -8,6 +8,7 @@ import { SettingsDashboard } from './settings-dashboard'
 import { AnalyticsDashboard } from './analytics-dashboard'
 import { PrelaunchDashboard } from './prelaunch-dashboard'
 import { AccountAssistant } from './account-assistant'
+import { InsightEngineDashboard } from './insight-engine-dashboard'
 import { ampliApi, type Campaign } from '../lib/ampli-api'
 import {
   Bell,
@@ -18,6 +19,7 @@ import {
   ChevronRight,
   CircleHelp,
   Grid2X2,
+  Gauge,
   LayoutDashboard,
   Menu,
   MoreVertical,
@@ -84,6 +86,7 @@ export function Dashboard() {
   if (activeNav === 'analytics') return <AnalyticsDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'prelaunch') return <PrelaunchDashboard onClose={() => setActiveNav('dashboard')} />
   if (activeNav === 'account') return <AccountAssistant onClose={() => setActiveNav('dashboard')} />
+  if (activeNav === 'insights') return <InsightEngineDashboard onClose={() => setActiveNav('dashboard')} />
 
   async function handleCreateCampaign() {
     if (!campaignUrl.trim()) return
@@ -110,6 +113,7 @@ export function Dashboard() {
           {[
             ['dashboard', LayoutDashboard, 'Dashboard'],
             ['analytics', TrendingUp, 'Analytics'],
+            ['insights', Gauge, 'Insight Engine'],
             ['developer', Code2, 'Developer Tools'],
             ['ai-tools', Sparkles, 'AI Tools'],
             ['calendar', CalendarDays, 'Calendar'],
